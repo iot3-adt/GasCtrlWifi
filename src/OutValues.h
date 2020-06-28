@@ -14,6 +14,7 @@ class OutValues : public Timer {
 	public:
 		OutValues(double*, int, int);
 		~OutValues();
+		void init(double*, int);
 		void cycle(Led*);
 };
 

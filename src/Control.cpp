@@ -5,10 +5,10 @@
 Control::Control(const int maxSize, const uint8_t *pinsInject, const uint8_t *pinsPush, Led* l, Inp* i):Errors(maxSize), led(l), inp(i)  {
   stat = false;
   arBalloons = new Balloon*[maxSize];
+	oV = new OutValues (arConvRes, 0, 16);    
   nBalloons = maxSize;
   arConvRes = new double[nBalloons];
   test_led(pinsInject); //только для тестирования
-	oV = new OutValues (arConvRes, nBalloons, 16);    //----
 	for(int i = 0; i < nBalloons; ++i){
 		pinMode(pinsInject[i], OUTPUT);                              //настраиваем плату
 		pinMode(pinsPush[i], INPUT);
@@ -18,12 +18,12 @@ Control::Control(const int maxSize, const uint8_t *pinsInject, const uint8_t *pi
 //--------------------------------------------------------------
 bool Control::init(int* ar, int nB){
 	nBalloons = nB;
-  // int* arTemp = new int[nBalloons];
 	StatBalloon status = StatBalloon::OFF;
   conversion(ar, nBalloons);                    //****
-    led->outValue(ar, nBalloons);
-    delay(3000);
-    led->outValue(arConvRes, nBalloons);              //----
+	led->outValue(ar, nBalloons);
+	delay(3000);
+	led->outValue(arConvRes, nBalloons);
+	oV->init(arConvRes, nBalloons);
 	for(int i = 0; i < nBalloons; ++i){
       if(arConvRes[i] == 0)  
         status = StatBalloon::OFF;
@@ -68,7 +68,7 @@ bool Control::cycle(){
   }
   // if(isError())
   //   outError();
-  // oV->cycle(led);
+  oV->cycle(led);
   return true;
 }
 //-----------------------------

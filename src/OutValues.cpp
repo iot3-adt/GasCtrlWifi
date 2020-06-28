@@ -7,16 +7,24 @@ OutValues::OutValues(double* ar, int sizeArr, int elements = 16): elements_H(ele
     nStr = 0;
 }
 //----------------------------
+void OutValues::init(double* ar, int sizeArr){
+    arValue = ar;
+    sizeAr = sizeArr;
+    nStr = 0;
+}
+//----------------------------
 void OutValues::cycle(Led* led){
-  if(!getTimer()){
-    setTimer(TIME_TIMER);
-    str = "CH_";
-    str += nStr;
-    str += " = ";
-    str += arValue[nStr++];
-    if (nStr == sizeAr){
-      nStr = 0;
+  if(sizeAr)
+    if(!getTimer()){
+      setTimer(TIME_TIMER);
+      str = "CH_";
+      str += nStr;
+      str += " = ";
+      str += arValue[nStr++];
+      if (nStr == sizeAr){
+        nStr = 0;
+      }
     }
-    led->outValue(str);
-  }
+  else str = "Stoped";
+  led->outValue(str);
 }
