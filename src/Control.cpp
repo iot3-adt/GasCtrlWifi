@@ -6,31 +6,34 @@ Control::Control(const int maxSize, const uint8_t *pinsInject, const uint8_t *pi
   stat = false;
   arBalloons = new Balloon*[maxSize];
   nBalloons = maxSize;
-  int* arTemp = new int[maxSize];
-  test_led(pinsInject);
-  if (!inp->getValue(arTemp, nBalloons)){
-    addError((char*)"Bad Value   ");
-  } else {
-    led->outValue(arTemp, maxSize);
+  arConvRes = new double[nBalloons];
+  test_led(pinsInject); //только для тестирования
+	oV = new OutValues (arConvRes, nBalloons, 16);    //----
+	for(int i = 0; i < nBalloons; ++i){
+		pinMode(pinsInject[i], OUTPUT);                              //настраиваем плату
+		pinMode(pinsPush[i], INPUT);
+		arBalloons[i] = new Balloon(pinsInject[i], pinsPush[i], StatBalloon::OFF,  &attention);     //если есть, создаем управляющий класс
+	}
+}
+//--------------------------------------------------------------
+bool Control::init(int* ar, int nB){
+	nBalloons = nB;
+  // int* arTemp = new int[nBalloons];
+	StatBalloon status = StatBalloon::OFF;
+  conversion(ar, nBalloons);                    //****
+    led->outValue(ar, nBalloons);
     delay(3000);
-    conversion(arTemp, nBalloons);
-    led->outValue(arConvRes, nBalloons);
-    oV = new OutValues (arConvRes, nBalloons, 16);
-    StatBalloon stat = StatBalloon::CONTROL;
-    for(int i = 0; i < maxSize; ++i){
-          pinMode(pinsInject[i], OUTPUT);                              //настраиваем плату
-          pinMode(pinsPush[i], INPUT);
+    led->outValue(arConvRes, nBalloons);              //----
+	for(int i = 0; i < nBalloons; ++i){
       if(arConvRes[i] == 0)  
-        stat = StatBalloon::OFF;
+        status = StatBalloon::OFF;
       else if(arConvRes[i] == 1)
-        stat = StatBalloon::FULL_ON;
+        status = StatBalloon::FULL_ON;
       else 
-        stat = StatBalloon::CONTROL;
-      arBalloons[i] = new Balloon(pinsInject[i], pinsPush[i], stat,  &attention);     //если есть, создаем управляющий класс
-      arBalloons[i] ->setTimeOn((uint32_t)CONST_TIME * arConvRes[i]);
+        status = StatBalloon::CONTROL;
+      	arBalloons[i] ->setTimeOn((uint32_t)CONST_TIME * arConvRes[i], status);
     }
-  }
-  stat = true;
+  return stat = true;	//TODO
 }
 //----------------------------
 void Control::test_led(const uint8_t *pinsInject){
@@ -63,9 +66,9 @@ bool Control::cycle(){
   for(int i = 0;i < nBalloons; ++i){
       arBalloons[i]->cycle();
   }
-  if(isError())
-    outError();
-  oV->cycle(led);
+  // if(isError())
+  //   outError();
+  // oV->cycle(led);
   return true;
 }
 //-----------------------------
@@ -76,7 +79,6 @@ void Control::outError(){
 }
 //----------------------------
 bool Control::conversion(int* ar, int sizeAr){
-  arConvRes = new double[sizeAr];
   int nMax = 0;
   for (int i = 0; i < sizeAr; ++i){
     if (ar[i] > nMax){

@@ -21,6 +21,7 @@ class Control: public Errors {
   public:
     Control(const int maxSize, const uint8_t *pinsInject, const uint8_t *pinsPush, Led* l, Inp* i); //при запуске передаем массив возможных портов. Подключен балон или нет, определяется при включении, по состоянию датчика давления
     ~Control();
+    bool init(int*, int);
     bool start(); //запуск системы
     void stop();  //остановка системы
     bool cycle();

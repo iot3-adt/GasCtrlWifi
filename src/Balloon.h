@@ -24,7 +24,7 @@ class Balloon {
 	Balloon(const uint8_t& pinInj, const uint8_t& pinSens, StatBalloon st, void (*f)(int, int)); //настройка классов без возможности запуска системы
 	Balloon(const uint8_t snj, const uint8_t sens, uint32_t t1, uint32_t t2);
 	~Balloon();
-	void setTimeOn(uint32_t dT);
+	void setTimeOn(uint32_t dT, StatBalloon);
 	bool cycle();
 	bool start();
 	void stop();

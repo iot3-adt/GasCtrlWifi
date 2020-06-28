@@ -15,7 +15,7 @@ Balloon::~Balloon(){
 }
 //----------------------------------
 bool Balloon::cycle(){
-  if(!digitalRead(pinSensor)){
+  if(!digitalRead(pinSensor)){  //если авария
     func(pinInject, pinSensor);
   }
   if(stat != StatBalloon::FULL_ON  && !timer->getTimer()){
@@ -24,8 +24,9 @@ bool Balloon::cycle(){
   return true;
 }
 //----------------------------------
-void Balloon::setTimeOn(uint32_t dT){
-  onTime = dT;
+void Balloon::setTimeOn(uint32_t dT, StatBalloon status){
+  onTime = dT; 
+  stat = status;
   Serial.print("Pin = ");
   Serial.print(pinInject);
   Serial.print(", onTime = ");
