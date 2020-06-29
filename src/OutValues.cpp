@@ -14,9 +14,9 @@ void OutValues::init(double* ar, int sizeArr){
 }
 //----------------------------
 void OutValues::cycle(Led* led){
-  if(sizeAr)
-    if(!getTimer()){
-      setTimer(TIME_TIMER);
+  if(!getTimer()){
+    setTimer(TIME_TIMER);
+    if(sizeAr){
       str = "CH_";
       str += nStr;
       str += " = ";
@@ -24,7 +24,8 @@ void OutValues::cycle(Led* led){
       if (nStr == sizeAr){
         nStr = 0;
       }
-    }
-  else str = "Stoped";
-  led->outValue(str);
+      led->outValue(str);
+    }  else str = "Stoped";
+    led->outError(str);
+  }
 }

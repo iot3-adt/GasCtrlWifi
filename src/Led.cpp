@@ -14,7 +14,9 @@ Led::Led(){
 }
 //------------------------
 void Led::clearEndLine(String str){
-  for(int i=str.length(); i < ELEMENTS_H; ++i)
+  // Serial.print("Led::clearEndLine");
+  // Serial.println(str.length());
+  for(unsigned int i=str.length(); i < ELEMENTS_H; ++i)
     lcd->print(" ");
 }
 //------------------------
@@ -30,7 +32,6 @@ void Led::outValue(int* ar, int sizeAr){
 	for(int i = 0; i < sizeAr; ++i){
 		lcd->setCursor(i * sizeBlock, 0);
 		lcd->print(ar[i]);
-		
 	}
 }
 //--------------------------
@@ -39,7 +40,6 @@ void Led::outValue(double* ar, int sizeAr){
   lcd->clear();
 	for(int i = 0; i < sizeAr; ++i){
 		lcd->setCursor(i * sizeBlock, 0);
-    Serial.println(ar[i]);
 		lcd->print((int)(ar[i]*100));
 	}
 }
@@ -47,7 +47,7 @@ void Led::outValue(double* ar, int sizeAr){
 void Led::outValue(char* str){
 		lcd->setCursor(0, 0);
 		lcd->print(str);
-    clearEndLine(str);
+    clearEndLine(String(str));
 }
 void Led::outValue(String str){
 		lcd->setCursor(0, 0);

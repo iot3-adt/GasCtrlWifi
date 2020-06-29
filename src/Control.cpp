@@ -20,10 +20,10 @@ bool Control::init(int* ar, int nB){
 	nBalloons = nB;
 	StatBalloon status = StatBalloon::OFF;
   conversion(ar, nBalloons);                    //****
-	led->outValue(ar, nBalloons);
-	delay(3000);
-	led->outValue(arConvRes, nBalloons);
-	oV->init(arConvRes, nBalloons);
+	//led->outValue(ar, nBalloons);
+	// delay(3000);
+	 led->outValue(arConvRes, nBalloons);
+	// oV->init(arConvRes, nBalloons);
 	for(int i = 0; i < nBalloons; ++i){
       if(arConvRes[i] == 0)  
         status = StatBalloon::OFF;

@@ -11,6 +11,7 @@
 const uint8_t arPins[]={ 12, 13, 14, 15, 16 };  //порты управляющие инжеторами
 const uint8_t arPush[]={ 17, 18,19, 4, 23 };   //порты опрашивающие датчики давления
 const int nControl = 5;                 //максимально возможное число газовых балонов
+int arTemp[nControl];
 Control* ctrl;
 Led* led;
 Inp* inp;
@@ -80,11 +81,14 @@ void setup() {
   server.on("/send_array", HTTP_GET, [](AsyncWebServerRequest *request){
     int params = request->params();
     AsyncWebParameter* p = request->getParam(0);
-    int nCh = (int)p->value().toInt();
-    int* arTemp = new int(nCh);
-    for(int i = 1; i < params; ++i){
+    int nCh = (int)(p->value().toInt());
+    Serial.print("nCh = ");
+    Serial.println(nCh);
+    for(unsigned int i = 1; i < params; ++i){
       p = request->getParam(i);
-      arTemp[i-1] = (int)p->value().toInt();
+      arTemp[i-1] = (int)(p->value().toInt());
+      Serial.print("el = ");
+      Serial.println(arTemp[i-1]);
     }
     request->send(200, "text/plain", "send_array");
     ctrl->init(arTemp, nCh);
