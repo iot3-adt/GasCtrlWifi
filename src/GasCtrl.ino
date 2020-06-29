@@ -59,7 +59,7 @@ void setup() {
       delay(1000);
       Serial.println("Connecting to WiFi..");
   }
-  led->outValue(WiFi.localIP().toString());
+  led->outError(WiFi.localIP().toString());
   Serial.println(WiFi.localIP());
   // WiFi.softAP(ssid, password);
   // IPAddress IP = WiFi.softAPIP();
@@ -82,13 +82,9 @@ void setup() {
     int params = request->params();
     AsyncWebParameter* p = request->getParam(0);
     int nCh = (int)(p->value().toInt());
-    Serial.print("nCh = ");
-    Serial.println(nCh);
     for(unsigned int i = 1; i < params; ++i){
-      p = request->getParam(i);
       arTemp[i-1] = (int)(p->value().toInt());
-      Serial.print("el = ");
-      Serial.println(arTemp[i-1]);
+      p = request->getParam(i);
     }
     request->send(200, "text/plain", "send_array");
     ctrl->init(arTemp, nCh);

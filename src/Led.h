@@ -11,7 +11,7 @@ class Led {
     void outError(String);
     void outValue(int* ar, int sizeAr);
     void outValue(double* ar, int sizeAr);
-    void outValue(char* str);
+    void outValue(const char* str);
     void outValue(String);
 };
 #endif

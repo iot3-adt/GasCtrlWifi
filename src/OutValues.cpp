@@ -1,10 +1,11 @@
 #include "OutValues.h"
-#define TIME_TIMER 1500
+#define TIME_TIMER 2000
 
-OutValues::OutValues(double* ar, int sizeArr, int elements = 16): elements_H(elements){
+OutValues::OutValues(double* ar, int sizeArr, const int elements = 16): elements_H(elements){
     arValue = ar;
     sizeAr = sizeArr;
     nStr = 0;
+    active = false;
 }
 //----------------------------
 void OutValues::init(double* ar, int sizeArr){
@@ -16,7 +17,7 @@ void OutValues::init(double* ar, int sizeArr){
 void OutValues::cycle(Led* led){
   if(!getTimer()){
     setTimer(TIME_TIMER);
-    if(sizeAr){
+    if(active){
       str = "CH_";
       str += nStr;
       str += " = ";
@@ -24,8 +25,9 @@ void OutValues::cycle(Led* led){
       if (nStr == sizeAr){
         nStr = 0;
       }
-      led->outValue(str);
-    }  else str = "Stoped";
-    led->outError(str);
+    }  else {
+      str = "Stoped";
+    }
+    led->outValue(str);
   }
 }

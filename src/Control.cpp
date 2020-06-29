@@ -4,10 +4,10 @@
 //******************************************************
 Control::Control(const int maxSize, const uint8_t *pinsInject, const uint8_t *pinsPush, Led* l, Inp* i):Errors(maxSize), led(l), inp(i)  {
   stat = false;
-  arBalloons = new Balloon*[maxSize];
-	oV = new OutValues (arConvRes, 0, 16);    
   nBalloons = maxSize;
+  arBalloons = new Balloon*[nBalloons];
   arConvRes = new double[nBalloons];
+	oV = new OutValues (arConvRes, 0, 16);    
   test_led(pinsInject); //только для тестирования
 	for(int i = 0; i < nBalloons; ++i){
 		pinMode(pinsInject[i], OUTPUT);                              //настраиваем плату
@@ -20,9 +20,11 @@ bool Control::init(int* ar, int nB){
 	nBalloons = nB;
 	StatBalloon status = StatBalloon::OFF;
   conversion(ar, nBalloons);                    //****
-	//led->outValue(ar, nBalloons);
-	// delay(3000);
-	 led->outValue(arConvRes, nBalloons);
+	oV->init(arConvRes, nBalloons);
+  Serial.print("Control::init nBalloons = ");
+  Serial.println(nBalloons);
+	led->outValue(arConvRes, nBalloons);
+	delay(3000);
 	// oV->init(arConvRes, nBalloons);
 	for(int i = 0; i < nBalloons; ++i){
       if(arConvRes[i] == 0)  
@@ -33,6 +35,7 @@ bool Control::init(int* ar, int nB){
         status = StatBalloon::CONTROL;
       	arBalloons[i] ->setTimeOn((uint32_t)CONST_TIME * arConvRes[i], status);
     }
+	oV->start();
   return stat = true;	//TODO
 }
 //----------------------------
@@ -66,8 +69,8 @@ bool Control::cycle(){
   for(int i = 0;i < nBalloons; ++i){
       arBalloons[i]->cycle();
   }
-  // if(isError())
-  //   outError();
+  if(isError())
+    outError();
   oV->cycle(led);
   return true;
 }
@@ -95,6 +98,8 @@ void Control::stop(){
   for(int i=0;stat && (i < nBalloons); ++i){
     arBalloons[i] -> stop();
   }
+	oV->stop();
   stat = false;
+	led->outValue(String("System"));
   // Serial.println("Control::stop()");
 }
