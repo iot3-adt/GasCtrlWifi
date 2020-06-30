@@ -2,7 +2,7 @@
 #define ERRORS_H
 #include <Arduino.h>
 #include "Timer.h"
-
+ 
 class Errors: public Timer{
     char **arErrors;
     int nErrors;        //допустимое число ошибок (по числу каналов)
