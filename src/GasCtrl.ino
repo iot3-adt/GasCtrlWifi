@@ -47,7 +47,7 @@ void setup() {
   inp = new Inp();
   ctrl = new Control(nControl, arPins, arPush, led, inp);
   Serial.println("end setup");
-
+ 
   if(!SPIFFS.begin()){
       Serial.println("An Error has occurred while mounting SPIFFS");
       return;
