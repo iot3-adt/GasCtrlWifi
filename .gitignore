@@ -1,0 +1,6 @@
+/.pio
+/.travis.yml
+/.vscode
+/lib
+/platformio.ini
+/test
