@@ -83,8 +83,8 @@ void setup() {
     AsyncWebParameter* p = request->getParam(0);
     int nCh = (int)(p->value().toInt());
     for(unsigned int i = 1; i < params; ++i){
-      arTemp[i-1] = (int)(p->value().toInt());
       p = request->getParam(i);
+      arTemp[i-1] = (int)(p->value().toInt());
     }
     request->send(200, "text/plain", "send_array");
     ctrl->init(arTemp, nCh);
