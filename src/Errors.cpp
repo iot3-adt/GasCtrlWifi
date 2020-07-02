@@ -16,12 +16,9 @@ Errors::~Errors(){
 }
 //----------------------------------
 bool Errors::addError(char *str){
-  if(nError == nErrors - 1){
-    Serial.println("Не хватает памяти для Errors");
-  } else {
+  if(nError <= nErrors - 1){
     if(strlen(str) > LENGTH_STR -1) //контроль длины строки
       str[LENGTH_STR-1] = 0;
-      Serial.println(str);          //TODO убрать. Отладка.
     strcpy(arErrors[nError++], str);
   }
   return nError < nErrors;

@@ -26,9 +26,6 @@ void Led::outError(String str){
 //-------------------------
 void Led::outValue(int* ar, int sizeAr){
   uint8_t sizeBlock = ELEMENTS_H/sizeAr;
-  Serial.print("Led::outValue int* sizeAr = ");
-  Serial.println(sizeBlock);
-  // lcd->clear();
 	for(int i = 0; i < sizeAr; ++i){
 		lcd->setCursor(i * sizeBlock, 0);
 		lcd->print(ar[i]);

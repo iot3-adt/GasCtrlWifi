@@ -105,8 +105,6 @@ bool Control::conversion(int* ar, int sizeAr){
   }
   for(int j = 0; j < sizeAr; ++j){
     arConvRes[j] = ar[j]/(double)nMax;
-		Serial.print("j = ");
-		Serial.println(arConvRes[j]);
   }
   return arConvRes != NULL;
 }
