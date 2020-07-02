@@ -7,6 +7,8 @@ Control::Control(const int maxSize, const uint8_t *pinsInject, const uint8_t *pi
   nBalloons = maxSize;
   arBalloons = new Balloon*[nBalloons];
   arConvRes = new double[nBalloons];
+	for(int i = 0; i < nBalloons; ++i)
+		arConvRes[i] = 0;
 	oV = new OutValues (arConvRes, 0, 16);    
   test_led(pinsInject); //только для тестирования
 	for(int i = 0; i < nBalloons; ++i){
@@ -21,10 +23,8 @@ bool Control::init(int* ar, int nB){
 	StatBalloon status = StatBalloon::OFF;
   conversion(ar, nBalloons);                    //****
 	oV->init(arConvRes, nBalloons);
-  Serial.print("Control::init nBalloons = ");
-  Serial.println(nBalloons);
-	led->outValue(arConvRes, nBalloons);
-	delay(3000);
+	// led->outValue(arConvRes, nBalloons);
+	// delay(3000);
 	// oV->init(arConvRes, nBalloons);
 	for(int i = 0; i < nBalloons; ++i){
       if(arConvRes[i] == 0)  
@@ -90,6 +90,8 @@ bool Control::conversion(int* ar, int sizeAr){
   }
   for(int j = 0; j < sizeAr; ++j){
     arConvRes[j] = ar[j]/(double)nMax;
+		Serial.print("j = ");
+		Serial.println(arConvRes[j]);
   }
   return arConvRes != NULL;
 }
@@ -100,6 +102,4 @@ void Control::stop(){
   }
 	oV->stop();
   stat = false;
-	led->outValue(String("System"));
-  // Serial.println("Control::stop()");
 }

@@ -6,10 +6,9 @@
 
 class OutValues : public Timer {
 		const int elements_H;
-		int maxSizeAr;
-		bool active;
 		double* arValue;
 		int sizeAr;
+		bool active;
 		String str;
 		int nStr;
 	public:
@@ -17,7 +16,7 @@ class OutValues : public Timer {
 		~OutValues();
 		void init(double*, int);
 		void cycle(Led*);
-		void stop(){active = false;}
+		void stop();
 		void start(){active = true;}
 };
 

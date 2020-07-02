@@ -14,15 +14,13 @@ Led::Led(){
 }
 //------------------------
 void Led::clearEndLine(String str){
-  // Serial.print("Led::clearEndLine");
-  // Serial.println(str.length());
   for(unsigned int i=str.length(); i < ELEMENTS_H; ++i)
     lcd->print(" ");
 }
 //------------------------
 void Led::outError(String str){
   lcd->setCursor(0, 1);
-  lcd->print(str);
+  lcd->print(str.c_str());
   clearEndLine(str);
 }
 //-------------------------
@@ -52,6 +50,6 @@ void Led::outValue(const char* str){
 }
 void Led::outValue(String str){
 		lcd->setCursor(0, 0);
-		lcd->print(str);
+		lcd->print(str.c_str());
     clearEndLine(str);
 }

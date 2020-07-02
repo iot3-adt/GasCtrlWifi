@@ -1,9 +1,7 @@
 #include "OutValues.h"
 #define TIME_TIMER 2000
 
-OutValues::OutValues(double* ar, int sizeArr, const int elements = 16): elements_H(elements){
-    arValue = ar;
-    sizeAr = sizeArr;
+OutValues::OutValues(double* ar, int sizeArr, const int elements = 16): elements_H(elements), arValue(ar), sizeAr(sizeArr) {
     nStr = 0;
     active = false;
 }
@@ -30,4 +28,8 @@ void OutValues::cycle(Led* led){
     }
     led->outValue(str);
   }
+}
+//----------------------------
+void OutValues::stop(){
+  active = false;
 }
