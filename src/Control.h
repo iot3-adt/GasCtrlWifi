@@ -16,10 +16,12 @@ class Control: public Errors {
     Inp *inp;
     OutValues *oV;
     Timer timer;
+    const uint8_t pinPause;
+    bool pause;
     double* arConvRes;
     bool stat;  //система включена - true
   public:
-    Control(const int maxSize, const uint8_t *pinsInject, const uint8_t *pinsPush, Led* l, Inp* i); //при запуске передаем массив возможных портов. Подключен балон или нет, определяется при включении, по состоянию датчика давления
+    Control(const int maxSize, const uint8_t *pinsInject, const uint8_t *pinsPush, Led* l, Inp* i, const uint8_t pP); //при запуске передаем массив возможных портов. Подключен балон или нет, определяется при включении, по состоянию датчика давления
     ~Control();
     bool init(int*, int);
     bool start(); //запуск системы

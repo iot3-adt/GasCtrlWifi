@@ -15,7 +15,7 @@ class OutValues : public Timer {
 		OutValues(double*, int, const int);
 		~OutValues();
 		void init(double*, int);
-		void cycle(Led*);
+		void cycle(Led*, bool pause);
 		void stop();
 		void start(){active = true;}
 };

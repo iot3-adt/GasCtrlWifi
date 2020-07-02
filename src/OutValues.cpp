@@ -12,17 +12,19 @@ void OutValues::init(double* ar, int sizeArr){
     nStr = 0;
 }
 //----------------------------
-void OutValues::cycle(Led* led){
+void OutValues::cycle(Led* led, bool pause){
   if(!getTimer()){
     setTimer(TIME_TIMER);
     if(active){
-      str = "CH_";
-      str += nStr;
-      str += " = ";
-      str += arValue[nStr++];
-      if (nStr == sizeAr){
-        nStr = 0;
-      }
+      if(!pause){
+        str = "CH_";
+        str += nStr;
+        str += " = ";
+        str += arValue[nStr++];
+        if (nStr == sizeAr){
+          nStr = 0;
+        }
+      } else str = "Pause";
     }  else {
       str = "Stoped";
     }

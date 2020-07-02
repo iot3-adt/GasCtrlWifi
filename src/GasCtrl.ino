@@ -10,6 +10,7 @@
 
 const uint8_t arPins[]={ 12, 13, 14, 15, 16 };  //порты управляющие инжеторами
 const uint8_t arPush[]={ 17, 18,19, 4, 23 };   //порты опрашивающие датчики давления
+const uint8_t pinPause = 27;  //обратная связь от ресивера. Пауза в работе.
 const int nControl = 5;                 //максимально возможное число газовых балонов
 int arTemp[nControl];
 Control* ctrl;
@@ -45,7 +46,8 @@ void setup() {
   Serial.begin(9600);
   led = new Led();
   inp = new Inp();
-  ctrl = new Control(nControl, arPins, arPush, led, inp);
+  pinMode(pinPause, INPUT_PULLDOWN);
+  ctrl = new Control(nControl, arPins, arPush, led, inp, pinPause);
   Serial.println("end setup");
 
   if(!SPIFFS.begin()){

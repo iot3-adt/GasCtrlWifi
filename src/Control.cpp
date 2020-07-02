@@ -2,8 +2,9 @@
 #define CONST_TIME 2000
 
 //******************************************************
-Control::Control(const int maxSize, const uint8_t *pinsInject, const uint8_t *pinsPush, Led* l, Inp* i):Errors(maxSize), led(l), inp(i)  {
+Control::Control(const int maxSize, const uint8_t *pinsInject, const uint8_t *pinsPush, Led* l, Inp* i, const uint8_t pP):Errors(maxSize), led(l), inp(i), pinPause(pP)  {
   stat = false;
+	pause = false;
   nBalloons = maxSize;
   arBalloons = new Balloon*[nBalloons];
   arConvRes = new double[nBalloons];
@@ -66,12 +67,26 @@ bool Control::cycle(){
     for(int j = 0; j < nBalloons; ++j)
       arBalloons[j]->start();
   }
+	if(!pause && digitalRead(pinPause)){	//если сработал датчик давления, ставим систему на паузу
+		pause = true;
+		for(int i = 0;i < nBalloons; ++i){
+				arBalloons[i]->pauseOn();
+		}
+	} else 
+	if(pause && (digitalRead(pinPause) == false)){	//либо снимаем с паузы
+		pause = false;
+		for(int i = 0;i < nBalloons; ++i){
+				arBalloons[i]->pauseOff();
+		}
+	}
+	//даём поработать баллонам
   for(int i = 0;i < nBalloons; ++i){
       arBalloons[i]->cycle();
   }
+
   if(isError())
     outError();
-  oV->cycle(led);
+  oV->cycle(led, pause);
   return true;
 }
 //-----------------------------

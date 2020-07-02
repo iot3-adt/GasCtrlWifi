@@ -17,6 +17,7 @@ class Balloon {
 		const uint8_t& pinInject;  //используем ссылки, что бы не расходовать память
 		const uint8_t& pinSensor;
 		int valSensor;
+		bool pause;					//временная остановка true
 		uint32_t genTime; 
 		uint32_t onTime;
 		void (*func)(int, int);
@@ -30,5 +31,7 @@ class Balloon {
 	void stop();
 	bool checkBal();
 	bool getValBal();
+	void pauseOn();
+	void pauseOff();
 };
 #endif
