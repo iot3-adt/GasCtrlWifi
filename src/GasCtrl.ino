@@ -61,10 +61,6 @@ void setup() {
   }
   led->outError(WiFi.localIP().toString());
   Serial.println(WiFi.localIP());
-  // WiFi.softAP(ssid, password);
-  // IPAddress IP = WiFi.softAPIP();
-  // Serial.print("AP IP address: ");
-  // Serial.println(IP);
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/index.html", "text/html");
   });
@@ -83,8 +79,8 @@ void setup() {
     AsyncWebParameter* p = request->getParam(0);
     int nCh = (int)(p->value().toInt());
     for(unsigned int i = 1; i < params; ++i){
-      arTemp[i-1] = (int)(p->value().toInt());
       p = request->getParam(i);
+      arTemp[i-1] = (int)(p->value().toInt());
     }
     request->send(200, "text/plain", "send_array");
     ctrl->init(arTemp, nCh);
