@@ -2,8 +2,8 @@
 #include <WiFi.h>
 #include "SPIFFS.h"
 #include "ESPAsyncWebServer.h"
-#include "AsyncJson.h"
-#include "ArduinoJson.h"
+// #include "AsyncJson.h"
+// #include "ArduinoJson.h"
 #include "Control.h"
 #include "Led.h"
 #include "Inp.h"
@@ -61,6 +61,10 @@ void setup() {
   }
   led->outError(WiFi.localIP().toString());
   Serial.println(WiFi.localIP());
+  // WiFi.softAP(ssid, password);
+  // IPAddress IP = WiFi.softAPIP();
+  // Serial.print("AP IP address: ");
+  // Serial.println(IP);
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/index.html", "text/html");
   });
