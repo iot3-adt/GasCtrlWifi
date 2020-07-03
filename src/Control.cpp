@@ -2,7 +2,7 @@
 #define CONST_TIME 2000
 
 //******************************************************
-Control::Control(const int maxSize, const uint8_t *pinsInject, const uint8_t *pinsPush, Led* l, Inp* i, const uint8_t pP):Errors(maxSize), led(l), inp(i), pinPause(pP)  {
+Control::Control(const int maxSize, const uint8_t *pinsInject, const uint8_t *pinsInjectU, const uint8_t *pinsPush, Led* l, Inp* i, const uint8_t pP):Errors(maxSize), led(l), inp(i), pinPause(pP)  {
   stat = false;
 	pause = false;
   nBalloons = maxSize;
@@ -13,9 +13,7 @@ Control::Control(const int maxSize, const uint8_t *pinsInject, const uint8_t *pi
 	oV = new OutValues (arConvRes, 0, 16);    
   test_led(pinsInject); //только для тестирования
 	for(int i = 0; i < nBalloons; ++i){
-		pinMode(pinsInject[i], OUTPUT);                              //настраиваем плату
-		pinMode(pinsPush[i], INPUT);
-		arBalloons[i] = new Balloon(pinsInject[i], pinsPush[i], StatBalloon::OFF,  &attention);     //если есть, создаем управляющий класс
+		arBalloons[i] = new Balloon(0x20, pinsInject[i], pinsInjectU[i], pinsPush[i], &attention);     //TODO изменить номер порта на переменную
 	}
 }
 //--------------------------------------------------------------

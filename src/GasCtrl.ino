@@ -8,10 +8,11 @@
 #include "Led.h"
 #include "Inp.h"
 
-const uint8_t arPins[]={ 12, 13, 14, 15, 16 };  //порты управляющие инжеторами
-const uint8_t arPush[]={ 17, 18,19, 4, 23 };   //порты опрашивающие датчики давления
+const uint8_t arPins[]={ 1, 3, 5, 7 };  //порты удержания управляющие инжеторами
+const uint8_t arPinU[]={ 0, 2, 4, 6 };  //порты открывающие (силовые) управляющие инжеторами
+const uint8_t arPush[]={ 17, 18, 19, 4};   //порты опрашивающие датчики давления
 const uint8_t pinPause = 27;  //обратная связь от ресивера. Пауза в работе.
-const int nControl = 5;                 //максимально возможное число газовых балонов
+const int nControl = 4;       //максимально возможное число газовых балонов
 int arTemp[nControl];
 Control* ctrl;
 Led* led;
@@ -47,7 +48,7 @@ void setup() {
   led = new Led();
   inp = new Inp();
   pinMode(pinPause, INPUT_PULLDOWN);
-  ctrl = new Control(nControl, arPins, arPush, led, inp, pinPause);
+  ctrl = new Control(nControl, arPins, arPinU, arPush, led, inp, pinPause);
   Serial.println("end setup");
 
   if(!SPIFFS.begin()){
