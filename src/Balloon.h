@@ -8,7 +8,7 @@
 #define INJECTOR_ON 0x0
 #define INJECTOR_OFF 0x1
 
-#define TIME_INJECT_ON 100 	//время включения инжектора
+#define TIME_INJECT_ON 5 	//время включения инжектора
 
 enum class StatBalloon {
   OFF,      
