@@ -2,29 +2,32 @@
 #define CONST_TIME 2000
 
 //******************************************************
-Control::Control(const int maxSize, const uint8_t *pinsInject, const uint8_t *pinsInjectU, const uint8_t *pinsPush, Led* l, Inp* i, const uint8_t pP):Errors(maxSize), led(l), inp(i), pinPause(pP)  {
+Control::Control(const int maxSize, const uint8_t *pinsInject, const uint8_t *pinsInjectU, const uint8_t *pinsPush, Led* l, Inp* i, const uint8_t pP, const uint8_t pE = 0x20):
+Errors(maxSize), led(l), inp(i), pinPause(pP) {
   stat = false;
 	pause = false;
   nBalloons = maxSize;
   arBalloons = new Balloon*[nBalloons];
   arConvRes = new double[nBalloons];
+  expander = new PCF8574(pE);	//передаем адрес платы расширения
+
 	for(int i = 0; i < nBalloons; ++i)
 		arConvRes[i] = 0;
+
 	oV = new OutValues (arConvRes, 0, 16);    
-  test_led(pinsInject); //только для тестирования
+
 	for(int i = 0; i < nBalloons; ++i){
-		arBalloons[i] = new Balloon(0x20, pinsInject[i], pinsInjectU[i], pinsPush[i], &attention);     //TODO изменить номер порта на переменную
+		arBalloons[i] = new Balloon(expander, pinsInject[i], pinsInjectU[i], pinsPush[i], &attention);     //TODO изменить номер порта на переменную
 	}
 }
 //--------------------------------------------------------------
 bool Control::init(int* ar, int nB){
+	Serial.print("nB = ");
+	Serial.println(nB);
 	nBalloons = nB;
 	StatBalloon status = StatBalloon::OFF;
   conversion(ar, nBalloons);                    //****
 	oV->init(arConvRes, nBalloons);
-	// led->outValue(arConvRes, nBalloons);
-	// delay(3000);
-	// oV->init(arConvRes, nBalloons);
 	for(int i = 0; i < nBalloons; ++i){
       if(arConvRes[i] == 0)  
         status = StatBalloon::OFF;
@@ -36,18 +39,6 @@ bool Control::init(int* ar, int nB){
     }
 	oV->start();
   return stat = true;	//TODO
-}
-//----------------------------
-void Control::test_led(const uint8_t *pinsInject){
-  for(int i=0; i < nBalloons; ++i){
-    pinMode(pinsInject[i], OUTPUT);   //настраиваем плату
-    digitalWrite(pinsInject[i], HIGH);
-    delay(75);
-  }
-  for(int i=0; i < nBalloons; ++i){
-    digitalWrite(pinsInject[i], LOW);
-    delay(75);
-  }
 }
 //----------------------------
 Control::~Control(){

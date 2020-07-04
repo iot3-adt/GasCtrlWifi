@@ -6,6 +6,7 @@
 #include "Inp.h"
 #include "OutValues.h"
 #include "timer.h"
+#include "libs/PCF8574.h"  // https://github.com/xreef/PCF8574_library
 
 void attention(int pin, int err);
 
@@ -14,6 +15,7 @@ class Control: public Errors {
     int nBalloons;    //число газовых балонов
     Led *led;
     Inp *inp;
+		PCF8574 *expander;	//расширитель I2C
     OutValues *oV;
     Timer timer;
     const uint8_t pinPause;
@@ -21,7 +23,7 @@ class Control: public Errors {
     double* arConvRes;
     bool stat;  //система включена - true
   public:
-    Control(const int maxSize, const uint8_t *pinsInject, const uint8_t *pinsInjectU, const uint8_t *pinsPush, Led* l, Inp* i, const uint8_t pP); //при запуске передаем массив возможных портов. Подключен балон или нет, определяется при включении, по состоянию датчика давления
+    Control(const int maxSize, const uint8_t *pinsInject, const uint8_t *pinsInjectU, const uint8_t *pinsPush, Led* l, Inp* i, const uint8_t pP, const uint8_t pE); //при запуске передаем массив возможных портов. Подключен балон или нет, определяется при включении, по состоянию датчика давления
     ~Control();
     bool init(int*, int);
     bool start(); //запуск системы
@@ -30,8 +32,5 @@ class Control: public Errors {
     bool conversion(int* ar, int sizeAr); //подсчет значений в проценты
     void textAr();
     void outError();
-    void test_led(const uint8_t *pinsInject);
-    // static void attention(int, int);
-    //bool testPressure();
 };
 #endif

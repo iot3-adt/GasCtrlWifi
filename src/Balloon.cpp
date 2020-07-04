@@ -1,19 +1,26 @@
 #include "Balloon.h"
 
 //--------------------------- вывод тестовой информации в конструкторе
-Balloon::Balloon(const uint8_t pE, const uint8_t& pinInj, const uint8_t& pinInjU, const uint8_t& pinSens, void (*f)(int, int)):port_expand(pE), pinInject(pinInj), pinInjectU(pinInjU), pinSensor(pinSens){
+Balloon::Balloon(PCF8574 *exp, const uint8_t& pinInj, const uint8_t& pinInjU, const uint8_t& pinSens, void (*f)(int, int)):expander(exp), pinInject(pinInj), pinInjectU(pinInjU), pinSensor(pinSens){
   stat = StatBalloon::OFF;
   pinU_ON = false;
   func = f;
   timer = new Timer();
   timerU = new Timer();
   pause = false;
-  expander = new PCF8574(0x20);
+  started = false;
+
+	expander->pinMode(pinInject, OUTPUT, INJECTOR_OFF);                              //настраиваем плату
+	expander->pinMode(pinInjectU, OUTPUT, INJECTOR_OFF);                              //настраиваем плату
+	pinMode(pinSensor, INPUT);
   expander->begin();
 
-	expander->pinMode(pinInject, OUTPUT);                              //настраиваем плату
-	expander->pinMode(pinInjectU, OUTPUT);                              //настраиваем плату
-	pinMode(pinSensor, INPUT);
+  expander->digitalWrite(pinInject, INJECTOR_ON);
+  expander->digitalWrite(pinInjectU, INJECTOR_ON);
+  delay(1500);
+  expander->digitalWrite(pinInject, INJECTOR_OFF);
+  expander->digitalWrite(pinInjectU, INJECTOR_OFF);
+  delay(500);
 
   Serial.print("Constructor Balloon, pin = ");
   Serial.print(pinInject);
@@ -32,10 +39,10 @@ bool Balloon::cycle(){
   }
   if(pinU_ON && !timerU->getTimer()){
     pinU_ON = false;
-    expander->digitalWrite(pinInjectU, LOW);
+    expander->digitalWrite(pinInjectU, INJECTOR_OFF);
   }
-  if(stat != StatBalloon::FULL_ON  && !timer->getTimer()){
-    expander->digitalWrite(pinInject, LOW);
+  if((stat == StatBalloon::CONTROL)  && !timer->getTimer()){
+    expander->digitalWrite(pinInject, INJECTOR_OFF);
   }
   return true;
 }
@@ -46,23 +53,27 @@ void Balloon::setTimeOn(uint32_t dT, StatBalloon status){
 }
 //-----------------------------------
 bool Balloon::start(){
-  timerU->setTimer(TIME_INJECT_ON);
   switch (stat)
   {
   case StatBalloon::OFF:
     break;
   case StatBalloon::FULL_ON:
-    if(pause)expander->digitalWrite(pinInject, LOW);
-    else {
-       expander->digitalWrite(pinInject, HIGH);
-       expander->digitalWrite(pinInjectU, HIGH);
-       pinU_ON = true;
+    if(pause){
+      expander->digitalWrite(pinInject, INJECTOR_OFF);
+      started = false;
+    } else if(!started){
+      timerU->setTimer(TIME_INJECT_ON);
+      expander->digitalWrite(pinInject, INJECTOR_ON);
+      expander->digitalWrite(pinInjectU, INJECTOR_ON);
+      pinU_ON = true;
+      started = true;
     }
     break;
   case StatBalloon::CONTROL:
     if(!pause){
-      expander->digitalWrite(pinInject, HIGH);
-      expander->digitalWrite(pinInjectU, HIGH);
+      timerU->setTimer(TIME_INJECT_ON);
+      expander->digitalWrite(pinInject, LOW);
+      expander->digitalWrite(pinInjectU, LOW);
       pinU_ON = true;
     }
     break;
@@ -72,7 +83,8 @@ bool Balloon::start(){
 //-----------------------------------
 void Balloon::stop(){
   stat = StatBalloon::OFF;
-  expander->digitalWrite(pinInject, LOW);
+  started = false;
+  expander->digitalWrite(pinInject, INJECTOR_OFF);
 }
 //-----------------------------------
 void Balloon::pauseOn(){

@@ -12,7 +12,7 @@ const uint8_t arPins[]={ 1, 3, 5, 7 };  //порты удержания упра
 const uint8_t arPinU[]={ 0, 2, 4, 6 };  //порты открывающие (силовые) управляющие инжеторами
 const uint8_t arPush[]={ 17, 18, 19, 4};   //порты опрашивающие датчики давления
 const uint8_t pinPause = 27;  //обратная связь от ресивера. Пауза в работе.
-const int nControl = 4;       //максимально возможное число газовых балонов
+const int nControl = 3;       //максимально возможное число газовых балонов
 int arTemp[nControl];
 Control* ctrl;
 Led* led;
@@ -48,7 +48,7 @@ void setup() {
   led = new Led();
   inp = new Inp();
   pinMode(pinPause, INPUT_PULLDOWN);
-  ctrl = new Control(nControl, arPins, arPinU, arPush, led, inp, pinPause);
+  ctrl = new Control(nControl, arPins, arPinU, arPush, led, inp, pinPause, 0x20);
   Serial.println("end setup");
 
   if(!SPIFFS.begin()){
@@ -85,9 +85,11 @@ void setup() {
     int params = request->params();
     AsyncWebParameter* p = request->getParam(0);
     int nCh = (int)(p->value().toInt());
-    for(unsigned int i = 1; i < params; ++i){
-      p = request->getParam(i);
-      arTemp[i-1] = (int)(p->value().toInt());
+    if(nCh > nControl)nCh = nControl;
+    for(unsigned int i = 0; (i < nControl) && (i < params - 1); ++i){
+      p = request->getParam(i+1);
+      arTemp[i] = (int)(p->value().toInt());
+    Serial.println(arTemp[i]);
     }
     request->send(200, "text/plain", "send_array");
     ctrl->init(arTemp, nCh);
